@@ -1111,8 +1111,8 @@
 
               if (trackRect.width > 0 && dotRect.width > 0) {
                 const dotCenterX = (dotRect.left + dotRect.width / 2) - trackRect.left;
-                // Position pacman right before the dot
-                const pacmanLeft = dotCenterX - pacmanWidth;
+                // Position pacman so the dot sits inside its open mouth (about 70% of width)
+                const pacmanLeft = dotCenterX - (pacmanWidth * 0.7);
                 elements.pacmanChomper.style.left = `${Math.round(pacmanLeft * 10) / 10}px`;
                 return;
               }
@@ -1120,7 +1120,7 @@
 
             // Fallback percentage calculation
             const stepRatio = totalViewPellets > 1 ? targetIndex / (totalViewPellets - 1) : 0;
-            elements.pacmanChomper.style.left = `calc(${Math.round(stepRatio * 1000) / 10}% - 22px)`;
+            elements.pacmanChomper.style.left = `calc(${Math.round(stepRatio * 1000) / 10}% - 14px)`;
           };
 
           setPosition();
