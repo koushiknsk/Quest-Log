@@ -790,6 +790,12 @@ body {
   min-height: 40px;
   padding: 0 16px;
   box-sizing: border-box;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.maze-track-inner::-webkit-scrollbar {
+  display: none;
 }
 
 /* Pac-Man Chomper Sprite (Flat Classic Arcade Style - Mouth open to the right) */
@@ -805,6 +811,10 @@ body {
   pointer-events: none;
 }
 
+.pacman-chomper.chomping .pacman-svg {
+  animation: none;
+}
+
 .pacman-svg {
   width: 100%;
   height: 100%;
@@ -812,13 +822,14 @@ body {
 
 /* Pellets Stream (Solid Classic Arcade Dots) */
 .maze-pellets-stream {
-  width: 100%;
+  width: max-content;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
+  gap: 24px;
   position: relative;
   z-index: 5;
-  padding: 0 2px;
+  padding: 0 24px 0 4px;
 }
 
 /* Base Pellet */

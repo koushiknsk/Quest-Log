@@ -1110,10 +1110,15 @@
               const pacmanWidth = elements.pacmanChomper.offsetWidth || 22;
 
               if (trackRect.width > 0 && dotRect.width > 0) {
-                const dotCenterX = (dotRect.left + dotRect.width / 2) - trackRect.left;
-                // Position pacman centered on the dot (shifting it left covers the previous day's dot because the gap is only ~3px!)
-                const pacmanLeft = dotCenterX - (pacmanWidth / 2);
+                const dotCenterX = (dotRect.left + dotRect.width / 2) - trackRect.left + track.scrollLeft;
+                // Position pacman strictly BEFORE the dot
+                const pacmanLeft = dotCenterX - pacmanWidth - 4;
                 elements.pacmanChomper.style.left = `${Math.round(pacmanLeft * 10) / 10}px`;
+                
+                // Auto-scroll the track so the pacman is centered in view
+                const containerWidth = track.clientWidth;
+                const targetScrollLeft = dotCenterX - (containerWidth / 2);
+                track.scrollTo({ left: targetScrollLeft, behavior: 'smooth' });
                 return;
               }
             }
