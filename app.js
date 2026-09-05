@@ -1111,8 +1111,8 @@
 
               if (trackRect.width > 0 && dotRect.width > 0) {
                 const dotCenterX = (dotRect.left + dotRect.width / 2) - trackRect.left;
-                // Position pacman so the dot sits inside its open mouth (about 70% of width)
-                const pacmanLeft = dotCenterX - (pacmanWidth * 0.7);
+                // Position pacman centered on the dot (shifting it left covers the previous day's dot because the gap is only ~3px!)
+                const pacmanLeft = dotCenterX - (pacmanWidth / 2);
                 elements.pacmanChomper.style.left = `${Math.round(pacmanLeft * 10) / 10}px`;
                 return;
               }
