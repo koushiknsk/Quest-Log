@@ -4,8 +4,7 @@
   'use strict';
 
   // LocalStorage Key
-  const STORAGE_KEY = 'kurogane_tactical_hud_state_v2';
-  const LEGACY_STORAGE_KEY = 'kurogane_tactical_hud_state_v1';
+  const STORAGE_KEY = 'quest_log_state_v1';
 
   // Day of week names: 0 = SUN, 1 = MON, 2 = TUE, 3 = WED, 4 = THU, 5 = FRI, 6 = SAT
   const DAY_NAMES = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
@@ -240,7 +239,7 @@
 
   function loadState() {
     try {
-      const saved = localStorage.getItem(STORAGE_KEY) || localStorage.getItem(LEGACY_STORAGE_KEY);
+      const saved = localStorage.getItem(STORAGE_KEY);
       const today = getTodayDateString();
 
       if (saved) {
