@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Quest Log</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#00ffcc">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+  <!-- Preconnect & Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Titillium+Web:wght@300;400;600;700;900&display=swap"
+    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    rel="stylesheet">
+
+  <!-- Core Styles -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <!-- Main HUD Application Layout -->
+  <div class="app-container">
+
+    <!-- Center Mobile Cockpit Frame -->
+    <main class="cockpit-frame" id="app-cockpit">
+
+      <!-- Top HUD Header -->
+      <header class="hud-header">
+        <div class="hud-title-group">
+          <span class="material-symbols-outlined"
+            style="color: var(--color-primary-light); font-size: 20px;">terminal</span>
+          <span class="hud-title">QUEST LOG</span>
+        </div>
+        <div class="hud-actions">
+          <button class="hud-icon-btn" id="open-rules-btn" title="Tactical Rule Book & Scoring Manual"
+            aria-label="Rule Book">
+            <span class="material-symbols-outlined" style="font-size: 18px;">menu_book</span>
+          </button>
+          <button class="hud-icon-btn dev-toggle-btn" id="toggle-dev-sandbox-btn" title="Developer Testing Sandbox"
+            aria-label="Dev Sandbox" style="display: none;">
+            <span class="material-symbols-outlined" style="font-size: 18px;">bug_report</span>
+          </button>
+          <button class="hud-icon-btn" id="sound-toggle-btn" title="Toggle Sound FX" aria-label="Toggle Sound Effects">
+            <span class="material-symbols-outlined" style="font-size: 18px;" id="sound-icon">volume_up</span>
+          </button>
+          <button class="hud-icon-btn" id="export-data-btn" title="Export Directives Data (.CSV)"
+            aria-label="Export Data">
+            <span class="material-symbols-outlined" style="font-size: 18px;">table_chart</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- View 1: Home Dashboard (Pilot Status) -->
+      <section class="view-panel active" id="view-dashboard">
+
+        <!-- Streak Recovery Shield Suggestion Banner (Sleek, Compact Suggestion Pill) -->
+        <div class="streak-shield-alert-banner" id="streak-shield-alert-banner" style="display: none;">
+          <div class="shield-banner-left">
+            <span class="shield-banner-title" id="shield-banner-title">STREAK IS AT RISK</span>
+          </div>
+          <div class="shield-banner-right">
+            <button type="button" class="shield-recover-action-btn" id="use-shield-recover-btn">
+              <span>USE SHIELD</span>
+              <span class="material-symbols-outlined" style="font-size: 13px; font-variation-settings: 'FILL' 1;">shield</span>
+            </button>
+            <button type="button" class="shield-banner-close-btn" id="close-shield-alert-btn" aria-label="Dismiss suggestion">
+              <span class="material-symbols-outlined">close</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Pac-Man Cyber Arcade HUD Section -->
+        <div class="arcade-hud-container">
+
+          <!-- Arcade Top Scoreboard (Score, Visual Shields, Reward, Streak) -->
+          <div class="arcade-scoreboard">
+            <div class="score-block score-metric-score">
+              <span class="score-label">SCORE</span>
+              <span class="score-val" id="arcade-score">000000</span>
+            </div>
+            <div class="score-block score-metric-shields" id="score-block-shields">
+              <span class="score-label">SHIELDS</span>
+              <div class="shields-slot-container" id="shields-slot-container"
+                title="1UP Streak Shields - Protects consistency on missed days (Max 3)">
+                <span class="shield-slot muted" id="shield-slot-1"><span
+                    class="material-symbols-outlined">shield</span></span>
+                <span class="shield-slot muted" id="shield-slot-2"><span
+                    class="material-symbols-outlined">shield</span></span>
+                <span class="shield-slot muted" id="shield-slot-3"><span
+                    class="material-symbols-outlined">shield</span></span>
+              </div>
+            </div>
+            <div class="score-block score-metric-reward">
+              <span class="score-label">REWARD</span>
+              <span class="score-val" id="arcade-consistency-bonus">+0 PTS</span>
+            </div>
+            <div class="score-block score-metric-streak">
+              <span class="score-label">STREAK</span>
+              <span class="score-val highlight" id="arcade-streak">0 DAYS</span>
+            </div>
+          </div>
+
+          <!-- Pac-Man Monthly Maze Track Card -->
+          <div class="pacman-maze-card">
+            <!-- Maze Header with Month Navigation (< PREV, NEXT >, TODAY) -->
+            <div class="maze-header">
+              <div class="maze-nav-group">
+                <button type="button" class="month-nav-btn" id="prev-month-btn" title="View Previous Month">
+                  <span class="material-symbols-outlined">chevron_left</span>
+                </button>
+                <span class="maze-month-title" id="maze-month-name">CURRENT MONTH</span>
+                <button type="button" class="month-nav-btn" id="next-month-btn" title="View Next Month">
+                  <span class="material-symbols-outlined">chevron_right</span>
+                </button>
+                <button type="button" class="month-today-btn" id="today-month-btn"
+                  title="Jump to Current Live Month">TODAY</button>
+              </div>
+              <div class="maze-stats" id="maze-stats-display">
+                <span class="pellets-count" id="pellets-eaten-display">00/30 DAYS</span>
+              </div>
+            </div>
+
+            <!-- Glowing Neon Maze Track -->
+            <div class="maze-track-wrapper">
+              <div class="maze-track-border">
+                <div class="maze-track-inner" id="maze-track-inner">
+                  <!-- Pac-Man Flat Arcade Sprite (No Glow) -->
+                  <div class="pacman-chomper" id="pacman-chomper" style="left: 0%;">
+                    <svg viewBox="0 0 32 32" class="pacman-svg">
+                      <path d="M16 16 L29 8.5 A14 14 0 1 0 29 23.5 Z" fill="#FFE600"></path>
+                    </svg>
+                  </div>
+                  <!-- Pellets Stream dynamically injected by app.js -->
+                  <div class="maze-pellets-stream" id="maze-pellets-stream"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Milestone Fruit Checkpoints Row (Dynamically populated by app.js) -->
+            <div class="fruit-checkpoints-row" id="fruit-checkpoints-row">
+              <!-- Dynamically rendered per month weeks by app.js -->
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="phase-filters" id="phase-filters-container">
+          <button class="phase-tab active" data-filter="today" id="phase-tab-day">TODAY'S QUESTS</button>
+          <button class="phase-tab" data-filter="all" id="phase-tab-all">YEARLY ARCHIVE</button>
+        </div>
+
+        <!-- Quests / Missions Section Header -->
+        <div class="protocols-section-header">
+          <h2 class="section-title" id="protocols-section-title">ACTIVE QUESTS</h2>
+          <button class="init-protocol-btn" id="open-init-screen-btn">
+            <span class="material-symbols-outlined" style="font-size: 14px;">bolt</span>
+            NEW QUEST
+          </button>
+        </div>
+
+        <!-- Dynamic Protocols Card Stream -->
+        <div class="protocols-list" id="protocols-list-container">
+          <!-- Dynamically populated by app.js -->
+        </div>
+
+      </section>
+
+      <!-- View 2: New Quest (New Habit Creation) -->
+      <section class="view-panel" id="view-init">
+
+        <!-- Screen Header -->
+        <div class="init-screen-header">
+          <button class="back-btn" id="init-back-btn" title="Return to Pilot Dashboard">
+            <span class="material-symbols-outlined" style="font-size: 20px;">arrow_back</span>
+          </button>
+          <h2 class="init-title">NEW QUEST</h2>
+          <div style="width: 38px;"></div> <!-- Spacer -->
+        </div>
+
+        <!-- Form Container -->
+        <form id="protocol-form" onsubmit="return false;" style="display: flex; flex-direction: column; gap: 20px;">
+
+          <!-- Terminal Input: Quest Name -->
+          <div class="form-group">
+            <label class="form-label" for="habit-name-input">
+              <span class="form-label-dot"></span>
+              <span>QUEST NAME</span>
+            </label>
+            <div class="terminal-input-wrapper">
+              <input type="text" id="habit-name-input" class="terminal-input" placeholder="E.G., HYDRATION_QUEST"
+                autocomplete="off" maxlength="36" required>
+            </div>
+          </div>
+
+          <!-- Category Selector -->
+          <div class="form-group">
+            <label class="form-label">
+              <span class="form-label-dot"></span>
+              <span>CATEGORY</span>
+            </label>
+            <div class="param-matrix-grid" id="param-matrix">
+              <div class="param-card" data-category="fitness" data-icon="fitness_center">
+                <span class="material-symbols-outlined">fitness_center</span>
+                <span class="param-card-label">FITNESS</span>
+              </div>
+              <div class="param-card" data-category="cardio" data-icon="monitor_heart">
+                <span class="material-symbols-outlined">monitor_heart</span>
+                <span class="param-card-label">CARDIO</span>
+              </div>
+              <div class="param-card" data-category="hydration" data-icon="water_drop">
+                <span class="material-symbols-outlined">water_drop</span>
+                <span class="param-card-label">HYDRATION</span>
+              </div>
+              <div class="param-card" data-category="deepfocus" data-icon="center_focus_strong">
+                <span class="material-symbols-outlined">center_focus_strong</span>
+                <span class="param-card-label">DEEP_FOCUS</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Metric Tracking (Optional) -->
+          <div class="form-group" id="form-metric-group">
+            <label class="form-label">
+              <span class="form-label-dot optional-dot"></span>
+              <span>TRACK METRIC <span class="opt-pill">OPTIONAL</span></span>
+            </label>
+            <div class="dates-grid">
+              <div class="date-field-group">
+                <div class="terminal-input-wrapper">
+                  <input type="text" id="metric-name-input" class="terminal-input" placeholder="NAME (E.G. VOLUME)">
+                </div>
+              </div>
+              <div class="date-field-group">
+                <div class="terminal-input-wrapper">
+                  <input type="text" id="metric-unit-input" class="terminal-input" placeholder="UNIT (E.G. KG, MINS, COUNT)">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Timeline: Start and End Dates -->
+          <div class="form-group" id="form-timeline-group">
+            <div class="dates-grid">
+              <div class="date-field-group">
+                <label class="form-label" for="start-date-input">
+                  <span class="form-label-dot"></span>
+                  <span>START_DATE</span>
+                </label>
+                <div class="terminal-input-wrapper">
+                  <input type="date" id="start-date-input" class="terminal-input date-input" required>
+                </div>
+              </div>
+              <div class="date-field-group">
+                <label class="form-label" for="end-date-input">
+                  <span class="form-label-dot optional-dot"></span>
+                  <span>END_DATE <span class="opt-pill">OPTIONAL</span></span>
+                </label>
+                <div class="terminal-input-wrapper">
+                  <input type="date" id="end-date-input" class="terminal-input date-input">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Frequency Slider & Days of Week -->
+          <div class="form-group slider-container" id="form-frequency-group">
+            <div class="slider-readout">
+              <label class="form-label">
+                <span class="form-label-dot"></span>
+                <span>FREQUENCY</span>
+              </label>
+              <span class="slider-display-val" id="freq-val-display">01 DAY/WEEK</span>
+            </div>
+
+            <div class="tactical-range-wrapper">
+              <div class="segmented-ticks">
+                <span class="tick"></span>
+                <span class="tick"></span>
+                <span class="tick"></span>
+                <span class="tick"></span>
+                <span class="tick"></span>
+                <span class="tick"></span>
+                <span class="tick"></span>
+              </div>
+              <input type="range" class="tactical-range" id="freq-slider-input" min="1" max="7" value="1">
+            </div>
+            <div
+              style="display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 10px; color: var(--color-muted); margin-bottom: 4px;">
+              <span>01 [MIN]</span>
+              <span>07 [MAX]</span>
+            </div>
+
+            <!-- Error alert placed just below frequency -->
+            <div class="schedule-validation-alert" id="freq-validation-alert" style="display: none;"></div>
+
+            <!-- Days of Week Selector -->
+            <div class="slider-readout" style="margin-top: 10px;">
+              <label class="form-label">
+                <span class="form-label-dot"></span>
+                <span>SCHEDULED DAYS OF WEEK</span>
+              </label>
+              <span class="days-count-display" id="days-count-display">0 / 1 SELECTED</span>
+            </div>
+            <div class="days-of-week-grid" id="days-of-week-container">
+              <button type="button" class="day-chip" data-day="0" data-day-name="SUN">SUN</button>
+              <button type="button" class="day-chip" data-day="1" data-day-name="MON">MON</button>
+              <button type="button" class="day-chip" data-day="2" data-day-name="TUE">TUE</button>
+              <button type="button" class="day-chip" data-day="3" data-day-name="WED">WED</button>
+              <button type="button" class="day-chip" data-day="4" data-day-name="THU">THU</button>
+              <button type="button" class="day-chip" data-day="5" data-day-name="FRI">FRI</button>
+              <button type="button" class="day-chip" data-day="6" data-day-name="SAT">SAT</button>
+            </div>
+
+            <!-- Error alert placed below scheduled days -->
+            <div class="schedule-validation-alert" id="schedule-validation-alert" style="display: none;"></div>
+          </div>
+
+          <!-- Notes / Briefing (Optional) -->
+          <div class="form-group">
+            <label class="form-label" for="habit-notes-input">
+              <span class="form-label-dot optional-dot"></span>
+              <span>NOTES <span class="opt-pill">OPTIONAL</span></span>
+            </label>
+            <div class="terminal-input-wrapper">
+              <textarea id="habit-notes-input" class="terminal-input terminal-textarea"
+                placeholder="ADDITIONAL QUEST OBJECTIVES, REWARD INTENT, OR CONTEXT..." rows="3" maxlength="200"></textarea>
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <div class="submit-btn-wrapper">
+            <button type="submit" class="submit-protocol-btn" id="submit-protocol-btn">
+              <span class="material-symbols-outlined" style="font-size: 18px;" id="submit-btn-icon">bolt</span>
+              <span id="submit-btn-text">DEPLOY_QUEST</span>
+            </button>
+          </div>
+
+        </form>
+
+      </section>
+
+    </main>
+
+  </div>
+
+  <!-- ==========================================================
+       TACTICAL RULE BOOK MODAL
+       ========================================================== -->
+  <div class="modal-backdrop" id="rules-modal-backdrop">
+    <div class="rules-modal-card" id="rules-modal-card">
+      <div class="rules-modal-header">
+        <div class="rules-title-group">
+          <span class="material-symbols-outlined" style="color: var(--color-primary-light);">menu_book</span>
+          <span class="rules-modal-title">TACTICAL SCORING MANUAL & RULE BOOK</span>
+        </div>
+        <button class="rules-close-btn" id="close-rules-btn" aria-label="Close Rules">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <div class="rules-modal-body">
+        <!-- Section 1: Daily Scoring -->
+        <div class="rule-section">
+          <div class="rule-section-title">
+            <span class="rule-badge">01</span>
+            <span>DAILY SCORING (MAX 100 PTS)</span>
+          </div>
+          <p class="rule-desc">
+            Points are awarded daily based on the percentage of scheduled protocols completed:
+          </p>
+          <div class="rule-formula-box">
+            <code>Daily Score = (Completed Directives / Scheduled Directives) × 100 PTS</code>
+          </div>
+          <p class="rule-note">
+            ⚠️ <strong>Daily Finalizer:</strong> Scores are calculated and permanently locked at <strong>11:59
+              PM</strong> every night. No retroactive score changes are permitted after finalization.
+          </p>
+        </div>
+
+        <!-- Section 2: 1UP Shields -->
+        <div class="rule-section">
+          <div class="rule-section-title">
+            <span class="rule-badge">02</span>
+            <span>1UP STREAK SHIELDS (MAX 3)</span>
+          </div>
+          <p class="rule-desc">
+            Complete <strong>2 consecutive perfect weeks</strong> (14 straight days with a 100 Daily Score) to earn
+            <strong>1 Shield 🛡️</strong>.
+          </p>
+          <ul class="rule-list">
+            <li><strong>Max Inventory:</strong> You can hold up to <strong>3 visual shields (🛡️ 🛡️ 🛡️)</strong>.</li>
+            <li><strong>No Idle Glow:</strong> Active earned shields in inventory have <strong>no glow</strong> in normal conditions.</li>
+            <li><strong>Actionable Static Warning Glow:</strong> On Day N+1, if Day N had a partial completion or no-show, the available shield displays a <strong>static neon glow</strong> (no dynamic breathing/pulse in any case).</li>
+            <li><strong>Day N+1 Muted Inventory State:</strong> When a shield is deployed on Day N+1, it remains visible in the inventory slot but <strong>muted with color</strong>.</li>
+            <li><strong>Day N+2 Removal:</strong> On Day N+2, the consumed shield is permanently removed from the inventory.</li>
+            <li><strong>1-Day Miss Rule:</strong> A shield can <strong>only be applied if you missed exactly 1 day</strong>.</li>
+            <li><strong>Weekly Limit:</strong> Maximum <strong>1 shield can be used per calendar week</strong>.</li>
+            <li><strong>Shield Generation Exclusion:</strong> Any week where a shield is used is <strong>not counted</strong> toward generating new shields.</li>
+            <li><strong>2-Day Missed Break:</strong> If 2 consecutive days are missed, shields cannot be used to restore the streak; your streak breaks and consistency multiplier resets to 0.</li>
+          </ul>
+        </div>
+
+        <!-- Section 3: Weekly Consistency Bonus (x) -->
+        <div class="rule-section">
+          <div class="rule-section-title">
+            <span class="rule-badge">03</span>
+            <span>WEEKLY CONSISTENCY BONUS (x)</span>
+          </div>
+          <p class="rule-desc">
+            Maintain unbreaking 100% daily consistency across calendar weeks to earn compounding bonus points:
+          </p>
+          <div class="rule-tier-grid">
+            <div class="rule-tier-card">
+              <span class="tier-wk">WEEK 1 PERFECT</span>
+              <span class="tier-pts">+10 PTS (x = 10)</span>
+            </div>
+            <div class="rule-tier-card">
+              <span class="tier-wk">WEEK 2 PERFECT</span>
+              <span class="tier-pts">+15 PTS (x = 15)</span>
+            </div>
+            <div class="rule-tier-card">
+              <span class="tier-wk">WEEK 3 PERFECT</span>
+              <span class="tier-pts">+20 PTS (x = 20)</span>
+            </div>
+            <div class="rule-tier-card">
+              <span class="tier-wk">WEEK N PERFECT</span>
+              <span class="tier-pts">+(Previous + 5) PTS</span>
+            </div>
+          </div>
+          <p class="rule-note">
+            🛡️ <strong>Shield Usage:</strong> When a shield is used on a missed day, consistency is preserved
+            (<strong>x value does not become 0</strong>), but no bonus is added for that shielded week. If 2 consecutive
+            days are missed or consistency breaks without a shield, <strong>x resets to 0</strong>.
+          </p>
+        </div>
+
+        <!-- Section 4: Dot Saturation Hierarchy -->
+        <div class="rule-section">
+          <div class="rule-section-title">
+            <span class="rule-badge">04</span>
+            <span>DOT SATURATION TELEMETRY</span>
+          </div>
+          <div class="rule-dot-legend">
+            <div class="legend-row">
+              <div class="maze-pellet small-dot dot-muted" style="display: inline-block;"></div>
+              <span><strong>Muted (Low Contrast):</strong> Future dates & days with 0 completed tasks.</span>
+            </div>
+            <div class="legend-row">
+              <div class="maze-pellet small-dot dot-partial" style="display: inline-block;"></div>
+              <span><strong>Partial Saturation:</strong> Partially completed days (amber).</span>
+            </div>
+            <div class="legend-row">
+              <div class="maze-pellet small-dot dot-complete" style="display: inline-block;"></div>
+              <span><strong>Full Saturation:</strong> 100% completed tasks (golden yellow).</span>
+            </div>
+            <div class="legend-row">
+              <div class="maze-pellet big-dot dot-partial" style="display: inline-block;"></div>
+              <span><strong>Big Sunday Dot (Partial):</strong> Sunday milestone with partial completion (vibrant orange).</span>
+            </div>
+            <div class="legend-row">
+              <div class="maze-pellet big-dot dot-complete" style="display: inline-block;"></div>
+              <span><strong>Big Sunday Dot (Complete):</strong> Sunday milestone with 100% completion (golden yellow).</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================
+       EXPORT MONTH SELECTOR MODAL
+       ========================================================== -->
+  <div class="modal-backdrop" id="export-modal-backdrop" style="display: none;">
+    <div class="rules-modal-card export-modal-card" id="export-modal-card">
+      <div class="rules-modal-header">
+        <div class="rules-title-group">
+          <span class="material-symbols-outlined" style="color: var(--color-primary-light);">table_chart</span>
+          <span class="rules-modal-title">EXPORT DATA (.CSV)</span>
+        </div>
+        <button class="rules-close-btn" id="close-export-modal-btn" aria-label="Close Export Modal">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <div class="export-modal-body">
+        <p class="export-modal-desc">
+          Select the calendar months you would like to include in your CSV export:
+        </p>
+
+        <div class="export-quick-actions">
+          <button type="button" class="export-quick-btn" id="export-select-all-btn">SELECT ALL</button>
+          <button type="button" class="export-quick-btn" id="export-select-current-btn">CURRENT MONTH</button>
+          <button type="button" class="export-quick-btn" id="export-deselect-all-btn">DESELECT ALL</button>
+        </div>
+
+        <div class="export-months-list" id="export-months-list">
+          <!-- Dynamically populated month checkboxes by app.js -->
+        </div>
+
+        <div class="export-actions-row">
+          <button type="button" class="export-cancel-btn" id="export-cancel-btn">CANCEL</button>
+          <button type="button" class="export-download-btn" id="export-confirm-download-btn">
+            <span class="material-symbols-outlined" style="font-size: 16px;">download</span>
+            <span>GENERATE CSV</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================
+       SHIELD RECOVERY CONFIRMATION MODAL (Popup like Rule Book)
+       ========================================================== -->
+  <div class="modal-backdrop" id="shield-confirm-modal-backdrop">
+    <div class="rules-modal-card shield-confirm-modal-card" id="shield-confirm-modal-card">
+      <div class="rules-modal-header">
+        <div class="rules-title-group">
+          <span class="material-symbols-outlined" style="color: #FF9500;">shield_with_heart</span>
+          <span class="rules-modal-title">TACTICAL STREAK RECOVERY</span>
+        </div>
+        <button class="rules-close-btn" id="close-shield-confirm-btn" aria-label="Cancel Shield">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <div class="shield-confirm-body">
+        <span class="material-symbols-outlined shield-confirm-icon">shield</span>
+        <span class="shield-confirm-title" id="shield-confirm-title">APPLY 1UP SHIELD?</span>
+        <p class="shield-confirm-desc" id="shield-confirm-desc">
+          This will consume 1 Shield from your inventory to protect your streak and consistency multiplier from breaking.
+        </p>
+        <span class="shield-confirm-date" id="shield-confirm-date-display">TARGET DATE: ---</span>
+        <div class="shield-confirm-actions">
+          <button type="button" class="shield-cancel-btn" id="shield-cancel-btn">CANCEL</button>
+          <button type="button" class="shield-apply-btn" id="shield-apply-btn">
+            <span class="material-symbols-outlined" style="font-size: 14px;">shield</span>
+            <span>APPLY SHIELD</span>
+          </button>
+          <button type="button" class="shield-remove-btn" id="shield-remove-btn" style="display: none;">
+            <span class="material-symbols-outlined" style="font-size: 14px;">restart_alt</span>
+            <span>DESELECT SHIELD (+1 REFUND)</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================
+       YEARLY ARCHIVE QUEST DETAILS MODAL (READ-ONLY POPUP)
+       ========================================================== -->
+  <div class="modal-backdrop" id="quest-details-modal-backdrop" style="display: none;">
+    <div class="rules-modal-card quest-details-modal-card" id="quest-details-modal-card">
+      <div class="rules-modal-header">
+        <div class="rules-title-group">
+          <span class="material-symbols-outlined" id="modal-quest-icon" style="color: var(--color-primary);">info</span>
+          <span class="rules-modal-title" id="modal-quest-header-title">QUEST SPECIFICATION</span>
+        </div>
+        <button class="rules-close-btn" id="close-quest-details-btn" aria-label="Close Quest Details">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <div class="quest-details-body">
+        <div class="quest-details-hero">
+          <div class="quest-details-icon-large" id="modal-quest-icon-box">
+            <span class="material-symbols-outlined" id="modal-quest-hero-icon" style="font-size: 32px;">sports_esports</span>
+          </div>
+          <div class="quest-details-title-stack">
+            <h3 class="quest-details-name" id="modal-quest-name">PROTOCOL_NAME</h3>
+            <div class="quest-details-pill-row">
+              <span class="quest-spec-pill category-pill" id="modal-quest-category">CATEGORY</span>
+              <span class="quest-spec-pill freq-pill" id="modal-quest-frequency">5D/WK</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="quest-spec-grid">
+          <div class="quest-spec-item">
+            <span class="spec-label">SCHEDULED DAYS</span>
+            <span class="spec-val" id="modal-quest-days">MON, TUE, WED, THU, FRI</span>
+          </div>
+          <div class="quest-spec-item">
+            <span class="spec-label">TIMELINE (START / END)</span>
+            <span class="spec-val" id="modal-quest-timeline">FROM 2026-09-04</span>
+          </div>
+        </div>
+
+        <div class="quest-spec-grid" id="modal-quest-metric-grid" style="display: none; margin-top: 12px;">
+          <div class="quest-spec-item" style="grid-column: span 2;">
+            <span class="spec-label" id="modal-quest-metric-label">METRIC TRACKING</span>
+            <div style="display: flex; gap: 10px; margin-top: 6px;">
+              <div style="background: rgba(255, 230, 0, 0.1); padding: 5px 8px; border: 1px solid var(--color-primary); border-radius: 4px; color: var(--color-primary); font-family: var(--font-mono); font-size: 12px;">
+                TOTAL ALL TIME: <span id="modal-quest-metric-total" style="font-weight: bold;">0</span> <span class="modal-quest-metric-unit"></span>
+              </div>
+              <div style="background: rgba(0, 255, 204, 0.1); padding: 5px 8px; border: 1px solid var(--color-secondary); border-radius: 4px; color: var(--color-secondary); font-family: var(--font-mono); font-size: 12px;">
+                THIS YEAR: <span id="modal-quest-metric-year" style="font-weight: bold;">0</span> <span class="modal-quest-metric-unit"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="quest-spec-notes-box">
+          <span class="spec-label">NOTES</span>
+          <p class="spec-notes-content" id="modal-quest-notes">NO DIRECTIVE BRIEFING FILED</p>
+        </div>
+
+        <div class="quest-details-actions">
+          <button type="button" class="quest-details-close-btn" id="modal-quest-close-action-btn">
+            <span class="material-symbols-outlined" style="font-size: 15px;">close</span>
+            <span>CLOSE SPECIFICATION</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================
+       METRIC INPUT MODAL
+       ========================================================== -->
+  <div class="modal-backdrop" id="metric-input-modal-backdrop" style="display: none; z-index: 9999;">
+    <div class="rules-modal-card" style="max-width: 350px;">
+      <div class="rules-modal-header">
+        <div class="rules-title-group">
+          <span class="material-symbols-outlined" style="color: var(--color-primary);">analytics</span>
+          <span class="rules-modal-title">LOG METRIC</span>
+        </div>
+        <button class="rules-close-btn" id="close-metric-modal-btn" aria-label="Close">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <div class="rules-modal-body" style="display: flex; flex-direction: column; gap: 15px;">
+        <p style="color: var(--color-text-dim); font-size: 12px; font-family: var(--font-mono); text-align: center;" id="metric-modal-desc">ENTER VALUE</p>
+        <div class="terminal-input-wrapper">
+          <input type="number" id="metric-modal-input" class="terminal-input" placeholder="0" style="font-size: 24px; text-align: center; height: 60px; font-weight: bold;">
+        </div>
+        <button class="export-download-btn" id="metric-modal-submit-btn" style="width: 100%; margin-top: 5px; justify-content: center;">
+          <span class="material-symbols-outlined" style="font-size: 16px;">check_circle</span>
+          <span>SAVE METRIC</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================
+       DEVELOPER TESTING SANDBOX PANEL (SIMULATOR)
+       ========================================================== -->
+  <div class="dev-sandbox-panel" id="dev-sandbox-panel">
+    <div class="dev-sandbox-header">
+      <div class="dev-title-group">
+        <span class="material-symbols-outlined" style="color: #FFE600; font-size: 16px;">bug_report</span>
+        <span class="dev-sandbox-title">DEV_TESTING_SANDBOX - SIMULATION_ENV</span>
+      </div>
+      <button class="dev-close-btn" id="close-dev-sandbox-btn" aria-label="Close Dev Sandbox">
+        <span class="material-symbols-outlined" style="font-size: 16px;">close</span>
+      </button>
+    </div>
+
+        <div class="dev-sandbox-body">
+      <!-- Time Machine Controls -->
+      <div class="dev-control-group">
+        <label class="dev-label">TIME MACHINE (MOCK VIRTUAL DATE):</label>
+        <div class="dev-date-row">
+          <input type="date" id="dev-mock-date-input" class="dev-date-input">
+          <button type="button" class="dev-action-btn" id="dev-prev-day-btn" title="Jump 1 Day Back">-1D</button>
+          <button type="button" class="dev-action-btn" id="dev-next-day-btn" title="Jump 1 Day Forward">+1D</button>
+          <span class="dev-day-pill" id="dev-day-pill">THU</span>
+          <button type="button" class="dev-action-btn highlight" id="dev-reset-date-btn"
+            title="Restore Live Device Time">LIVE NOW</button>
+        </div>
+      </div>
+
+      <!-- Quick Fast-Simulation Actions -->
+      <div class="dev-control-group">
+        <label class="dev-label">FAST SCORING & STREAK SIMULATORS:</label>
+        <div class="dev-sim-grid">
+          <!-- a. Fully Completed Day -->
+          <button type="button" class="dev-sim-btn" id="dev-sim-full-day-btn"
+            title="Automatically mark all protocols available for this day to complete">
+            <span class="material-symbols-outlined">check_circle</span>
+            <span>FULLY COMPLETED DAY</span>
+          </button>
+          <!-- b. Partially Completed Day -->
+          <button type="button" class="dev-sim-btn" id="dev-sim-partial-day-btn"
+            title="Automatically mark random protocols for this day (leaving at least one incomplete)">
+            <span class="material-symbols-outlined">incomplete_circle</span>
+            <span>PARTIALLY COMPLETED DAY</span>
+          </button>
+          <!-- c. Fully Completed Week -->
+          <button type="button" class="dev-sim-btn" id="dev-sim-full-week-btn"
+            title="Automatically mark all protocols available for this whole week to complete">
+            <span class="material-symbols-outlined">bolt</span>
+            <span>FULLY COMPLETED WEEK</span>
+          </button>
+          <!-- d. Partially Completed Week -->
+          <button type="button" class="dev-sim-btn" id="dev-sim-partial-week-btn"
+            title="Automatically mark random protocols across the week with mix of full/partial days">
+            <span class="material-symbols-outlined">pie_chart</span>
+            <span>PARTIALLY COMPLETED WEEK</span>
+          </button>
+          <!-- Shield & Streak Simulation Helpers -->
+          <button type="button" class="dev-sim-btn" id="dev-sim-missed-yesterday-btn"
+            title="Simulates missing yesterday to test interactive recovery prompt and shield application">
+            <span class="material-symbols-outlined">shield_with_heart</span>
+            <span>SIM MISSED YESTERDAY (ALERT)</span>
+          </button>
+          <button type="button" class="dev-sim-btn" id="dev-trigger-midnight-btn"
+            title="Triggers the 11:59 PM score finalizer">
+            <span class="material-symbols-outlined">nightlight</span>
+            <span>LOCK IN 11:59 PM SCORE</span>
+          </button>
+          <button type="button" class="dev-sim-btn danger" id="dev-clear-history-btn"
+            title="Clear all simulated history">
+            <span class="material-symbols-outlined">delete_sweep</span>
+            <span>PURGE HISTORY</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- Application Logic -->
+  <script src="audio.js"></script>
+  <script src="app.js"></script>
+
+  <!-- PWA Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then(registration => console.log('SW Registered'))
+          .catch(err => console.error('SW Registration failed', err));
+      });
+    }
+  </script>
+</body>
+
+</html>
