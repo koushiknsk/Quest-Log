@@ -4,7 +4,7 @@
   'use strict';
 
   // LocalStorage Key
-  const STORAGE_KEY = 'quest_log_state_v1';
+  const STORAGE_KEY = 'quest_log_state_v2';
 
   // Day of week names: 0 = SUN, 1 = MON, 2 = TUE, 3 = WED, 4 = THU, 5 = FRI, 6 = SAT
   const DAY_NAMES = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
@@ -273,9 +273,9 @@
         state.streak = parsed.streak || 0;
         state.partialDays = parsed.partialDays || {};
         state.shieldAppliedOn = parsed.shieldAppliedOn || null;
-        state.firstLoginDate = localStorage.getItem('kurogane_first_login_date') || parsed.firstLoginDate || today;
-        if (!localStorage.getItem('kurogane_first_login_date')) {
-          localStorage.setItem('kurogane_first_login_date', state.firstLoginDate);
+        state.firstLoginDate = localStorage.getItem('quest_log_first_login_date') || parsed.firstLoginDate || today;
+        if (!localStorage.getItem('quest_log_first_login_date')) {
+          localStorage.setItem('quest_log_first_login_date', state.firstLoginDate);
         }
 
         // Ensure today's history exists
@@ -301,8 +301,8 @@
         state.usedShieldWeeks = {};
         state.consistencyBonus = 0;
         state.streak = 0;
-        state.firstLoginDate = localStorage.getItem('kurogane_first_login_date') || today;
-        localStorage.setItem('kurogane_first_login_date', state.firstLoginDate);
+        state.firstLoginDate = localStorage.getItem('quest_log_first_login_date') || today;
+        localStorage.setItem('quest_log_first_login_date', state.firstLoginDate);
         saveState();
       }
     } catch (e) {
@@ -319,9 +319,9 @@
   function saveState() {
     try {
       if (!state.firstLoginDate) {
-        state.firstLoginDate = localStorage.getItem('kurogane_first_login_date') || getTodayDateString();
+        state.firstLoginDate = localStorage.getItem('quest_log_first_login_date') || getTodayDateString();
       }
-      localStorage.setItem('kurogane_first_login_date', state.firstLoginDate);
+      localStorage.setItem('quest_log_first_login_date', state.firstLoginDate);
       localStorage.setItem(STORAGE_KEY, JSON.stringify({
         protocols: state.protocols,
         history: state.history,
